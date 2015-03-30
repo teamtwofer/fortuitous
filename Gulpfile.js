@@ -7,7 +7,7 @@ var gulp    = require('gulp'),
 
 
 function handleError(err) {
-    console.log(err.toString());
+    // console.log(err.toString());
     this.emit('end');
 }
 
@@ -21,7 +21,7 @@ gulp.task('server', function() {
     console.log("Running the server again!");
     var options = {};
     options.env = process.env;
-    options.env.PORT = 4002;
+    options.env.PORT = 4004;
     options.env.NODE_ENV = 'development';
     server.run(['./src/index.js'], options);
 });
@@ -34,7 +34,7 @@ gulp.task('watch', function() {
   options.env = process.env;
   options.env.PORT = 4002;
   options.env.NODE_ENV = 'development';
-  server.run(['./src/index.js'], options);
+  // server.run(['./src/index.js'], options);
 });
 
 gulp.task('default', ['watch', 'server']);

@@ -10,7 +10,7 @@ var express     = require('express'),
     compression = require('compression');
 
 logger = function(req, res, next) {
-  console.log("#{req.method} #{req.url}");
+  console.log(req.method + " " + req.url);
   if (req.method != "GET") {
     console.log(JSON.stringify(req.body));
   }
@@ -44,7 +44,7 @@ db.once('open', function() {
 
 app.namespace("/api", function() {
   app.namespace("/v1", function() {
-    // so now to decide how to structure the app. 
+    // so now to decide how to structure the app.
     // GET  /user/new -> return blank new user object with each of their properties.
     // POST /user     -> create new user
     // GET  /user     -> return existing user with public attributes

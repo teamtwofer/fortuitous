@@ -2,12 +2,12 @@ database:
   test:
     username: "test"
     password: "password"
-    url:      "mongodb://localhost/fortuitous-test"
+    url:      "mongodb://localhost:27017/fortuitous-test"
   development:
     username: "development"
     password: "password"
-    url:      "mongodb://localhost/fortuitous-development"
+    url:      "mongodb://localhost:27017/fortuitous-development"
   production:
     username: "production"
     password: "password"
-    url:      "mongodb://localhost/fortuitous-production"
+    url:      "mongodb://localhost:27017/fortuitous-production"
