@@ -1,0 +1,13 @@
+database:
+  test:
+    username: "test"
+    password: "password"
+    url:      "mongodb://localhost/fortuitous-test"
+  development:
+    username: "development"
+    password: "password"
+    url:      "mongodb://localhost/fortuitous-development"
+  production:
+    username: "production"
+    password: "password"
+    url:      "mongodb://localhost/fortuitous-production"
