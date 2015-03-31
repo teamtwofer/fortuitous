@@ -17,9 +17,7 @@ logger = function(req, res, next) {
   next();
 }
 
-requireAdmin = function(req, res, next) {
-}
-
+app.use(bp.json());
 
 app.use(logger);
 
@@ -37,8 +35,8 @@ userController = require("./controller/user_controller.js")(mongoose, mongoose.S
 db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function() {
-  http.listen(Number(process.env.PORT || 3000), function() {
-    return console.log('listening on *:' + process.env.PORT || 3000);
+  http.listen(Number(4004), function() {
+    return console.log('listening on *:' + 4004);
   });
 });
 
@@ -49,6 +47,8 @@ app.namespace("/api", function() {
     // POST /user     -> create new user
     // GET  /user     -> return existing user with public attributes
     // GET  /user     -> return existing user with private attributes
-    app.get("/user/new", userController.new);
+    app.get("/users/new", userController.new);
+    app.post("/users", userController.create);
+    app.put("/users/:username", userController.requireAuth, userController.update);
   });
 });

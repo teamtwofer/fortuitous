@@ -11,10 +11,14 @@ function handleError(err) {
     this.emit('end');
 }
 
-gulp.task('tests', function() {
-  gulp.src("./test/**/*.js")
-    .pipe(mocha())
-    .on("error", handleError);
+gulp.task('tests', function(cb) {
+  setTimeout(function() {
+    gulp.src("./test/**/*.js")
+      .pipe(mocha())
+      .on("error", handleError);
+      cb();
+    }, 500);
+
 });
 
 gulp.task('server', function() {
@@ -22,7 +26,7 @@ gulp.task('server', function() {
     var options = {};
     options.env = process.env;
     options.env.PORT = 4004;
-    options.env.NODE_ENV = 'development';
+    options.env.NODE_ENV = 'test';
     server.run(['./src/index.js'], options);
 });
 
@@ -33,7 +37,7 @@ gulp.task('watch', function() {
   var options = {};
   options.env = process.env;
   options.env.PORT = 4002;
-  options.env.NODE_ENV = 'development';
+  options.env.NODE_ENV = 'test';
   // server.run(['./src/index.js'], options);
 });
 

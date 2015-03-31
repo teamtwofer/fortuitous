@@ -22,9 +22,9 @@ db.on('error', function() {
 });
 
 logger = function(req, res, next) {
-  console.log("#{req.method} #{req.url}");
+  //console.log("#{req.method} #{req.url}");
   if (req.method != "GET") {
-    console.log(JSON.stringify(req.body));
+    // console.log(JSON.stringify(req.body));
   }
   next();
 }
@@ -42,48 +42,97 @@ var currentEnv = "test";
 // });
 
 var User;
-var db;
 var newUser;
 var validUser;
 
-describe('User', function() {
-  // this.timeout(15000);
+describe('User model', function() {
+  this.timeout(15000);
+  // this.timeout = 15000;
+  var db;
   before(function(done) {
     done();
   });
 
   beforeEach(function(done) {
     // db = mongoose.connection;
+    // console.log("Hey, I am here");
     if (!User) {
-      db = mongoose.createConnection(doc.database[currentEnv].url);
-      db.once("open", function() {
+      db = mongoose.createConnection(doc.database["development"].url);
+      delete mongoose.connection.models['User'];
+      // var makeUser = require("../../src/model/user.js");
+      // User = makeUser(mongoose, mongoose.Schema);
+      // newUser = new User();
+      // validUser = new User();
+      // validUser.name = "Valid Name";
+      // validUser.userName = "longusername";
+      // validUser.facebookId = "10155392507670475";
+      // console.log("And I'm in here...");
+      // return done();
+      db.on('error', console.error.bind(console, 'connection error:'));
+      db.on("open", function() {
+        // console.log("And I'm in here...");
         var makeUser = require("../../src/model/user.js");
+        // console.log(db.db);
         User = makeUser(mongoose, mongoose.Schema);
+        // console.log("Hoping that user exists:", User);
         newUser = new User();
         validUser = new User();
         validUser.name = "Valid Name";
         validUser.userName = "longusername";
+        validUser.facebookId = "10155392507670475";
+        // console.log("And I'm in here...");
         return done();
       });
     } else {
+      // console.log("WHAT WHAT");
       newUser = new User();
       validUser = new User();
       validUser.name = "Valid Name";
       validUser.userName = "longusername";
+      validUser.facebookId = "10155392507670475";
       User.remove({}, function(err) {
         return done();
       });
     };
   });
+  describe('token/auth', function() {
+    it('should generate a token based on the user id', function(done) {
+      validUser.save(function() {
+        var token = validUser.makeToken();
+        should.exist(token);
+        done();
+      });
+    });
+    it('should return a user when decoding a token', function(done) {
+      validUser.save(function() {
+        var token = validUser.makeToken();
 
+        User.forToken(token, function(err, user) {
+
+          should.not.exist(err);
+          user.id.should.equal(validUser.id);
+          done();
+        });
+      });
+    });
+    it('should not error if invalid/no token is supplied', function(done) {
+      validUser.save(function() {
+        User.forToken('fake token', function(err, user) {
+          should.exist(err);
+          done();
+        });
+      });
+    });
+  });
   describe('validations', function() {
+    // console.log("WHAT WHAT");
     describe('name', function() {
       it("should force you to put a name in", function(done) {
         var newUser = new User();
-        console.log("WHAT WHAT");
-        console.log(newUser);
+        // console.log("WHAT WHAT");
+        // console.log(newUser);
         newUser.save(function(err){
-          console.log("I am here!");
+          // console.log("I am here!");
           should.exist(err);
           done();
         });
@@ -152,7 +201,25 @@ describe('User', function() {
           });
       });
     });
-
-
+    describe('facebookId', function() {
+      it('should return a user if attemped to be found', function(done) {
+        validUser.save(function(err) {
+          // console.log(validUser);
+          User.findByFacebookId(validUser.facebookId, function(error, user) {
+            // console.log(user);
+            user.facebookId.should.equal(validUser.facebookId);
+            done();
+          });
+        });
+      });
+      it('should return an empty array if no users are found', function(done) {
+        validUser.save(function(err) {
+          User.findByFacebookId(000001, function(error, user) {
+            should.not.exist(user);
+            done();
+          });
+        });
+      });
+    });
   });
 });
